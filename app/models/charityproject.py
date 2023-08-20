@@ -5,11 +5,8 @@ from sqlalchemy.orm import relationship, validates
 from app.core.db import Base
 from app.models.donation import Donation
 
+from app.models.core_models import same_time
 from app.models.error_hendlers import len_not_null, int_not_zero
-
-
-def same_time(context):
-    return context.get_current_parameters()['create_date']
 
 
 class Charityproject(Base):
@@ -20,7 +17,6 @@ class Charityproject(Base):
     fully_invested = Column(Boolean, default=False)
     create_date = Column(DateTime, default=datetime.utcnow)
     close_date = Column(DateTime, default=same_time)
-    donations = relationship(Donation, cascade='delete')
      
     @validates(name, description)
     def validate_len(self, key, value):

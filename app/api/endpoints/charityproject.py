@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.core import investition
 from app.core.db import get_async_session
 from app.crud.charityproject import charityproject_crud
 from app.schemas.charityproject import (
@@ -22,11 +23,12 @@ async def create_new_charity_project(
     new_project: CharityProjectCreate,
     session: AsyncSession = Depends(get_async_session),
 ):
-    # await is_session(session)
     await check_name_duplicate(new_project.name, session)
     new_charity_project = await charityproject_crud.create(
         new_project, session
     )
+    await investition(session)
+    await session.refresh(new_charity_project)
     return new_charity_project
     
 
@@ -58,7 +60,7 @@ async def remove_charity_project(
     '/{charity_project_id}',
     response_model=CharityProjectDB,
 )
-async def partially_update_meeting_room(
+async def partially_update_charity_project(
     charity_project_id: int,
     obj_in: CharityProjectUpdate,
     session: AsyncSession = Depends(get_async_session),

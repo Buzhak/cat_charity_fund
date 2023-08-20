@@ -9,7 +9,7 @@ from app.models.core_models import same_time
 from app.models.error_hendlers import len_not_null, int_not_zero
 
 
-class Charityproject(Base):
+class CharityProject(Base):
     name = Column(String(100), unique=True, nullable=False)
     description = Column(Text)
     full_amount = Column(Integer, nullable=False)

@@ -16,14 +16,16 @@ class DonationUpdate(BaseModel):
     comment: Optional[str]
 
 class DonationShortDB(DonationBase):
+    id: int
+    create_date: datetime
 
     class Config:
         orm_mode = True
 
 class DonationFullDB(DonationBase):
-
     id: int
     create_date: datetime
+    user_id: int
     invested_amount: int
     fully_invested: bool
     close_date: datetime

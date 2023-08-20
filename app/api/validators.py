@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.crud.charityproject import charityproject_crud
-from app.models.charityproject import Charityproject
+from app.models.charityproject import CharityProject
 
 
 async def check_name_duplicate(
@@ -21,7 +21,7 @@ async def check_name_duplicate(
 async def check_charity_project_exists(
         project_id: int,
         session: AsyncSession,
-) -> Charityproject:
+) -> CharityProject:
     meeting_room = await charityproject_crud.get(project_id, session)
     if meeting_room is None:
         raise HTTPException(

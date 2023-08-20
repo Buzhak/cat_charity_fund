@@ -9,7 +9,7 @@ from app.models.error_hendlers import int_not_zero
 
 
 class Donation(Base):
-    # user_id = Column(Integer, ForeignKey('user.id'))
+    user_id = Column(Integer, ForeignKey('user.id'))
     comment = Column(Text)
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0)

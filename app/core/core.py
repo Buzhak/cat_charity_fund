@@ -1,18 +1,17 @@
 from datetime import datetime
 
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.db import Base
-from app.models.charityproject import Charityproject
+from app.models.charityproject import CharityProject
 from app.models.donation import Donation
 
 
 async def get_not_full_investition_list(
-    model: Charityproject or Donation, session: AsyncSession
+    model: CharityProject or Donation, session: AsyncSession
 ) -> (
-    list[Charityproject,] or list[Donation,]
+    list[CharityProject,] or list[Donation,]
 ):
     '''Функция отдаёт все оъекты, средства в коротых не были распределены до конца'''
     not_fully_invested = await session.execute(
@@ -24,7 +23,9 @@ async def get_not_full_investition_list(
     return not_fully_invested
 
 
-async def update_data_in_db(donation_db: Donation, project_db: Charityproject, session: AsyncSession) -> None:
+async def update_data_in_db(
+    donation_db: Donation, project_db: CharityProject, session: AsyncSession
+) -> None:
     '''Обновляем данные в ДБ'''
     session.add(donation_db)
     session.add(project_db)
@@ -33,7 +34,9 @@ async def update_data_in_db(donation_db: Donation, project_db: Charityproject, s
     await session.refresh(project_db)
 
 
-async def close_bd_obj(obj_db: Donation or Charityproject) -> Donation or Charityproject:
+async def close_bd_obj(
+    obj_db: Donation or CharityProject
+) -> Donation or CharityProject:
     '''
     Закрываем запись в БД
     Ставим "invested_amount" равным "full_amount"
@@ -47,28 +50,31 @@ async def close_bd_obj(obj_db: Donation or Charityproject) -> Donation or Charit
 
 
 async def investition(session: AsyncSession) -> None:
-    not_fully_invested_projects = await get_not_full_investition_list(Charityproject, session)
-    # not_fully_invested_donations = await get_not_full_investition_list(Donation, session)
+    '''
+    Функция перечисляет свободные средства от донатов в текущие открытые пректы.
+    Если средства в проекте собраны - проект закрывается.
+    Если все средства доната израсходованны - донат закрывается.
+    '''
+    not_fully_invested_projects = await get_not_full_investition_list(CharityProject, session)
 
     if len(not_fully_invested_projects) != 0:
         for project_db in not_fully_invested_projects:
             not_fully_invested_donations = await get_not_full_investition_list(Donation, session)
+            if len(not_fully_invested_donations) == 0:
+                break
             for donation_db in not_fully_invested_donations:
                 project_amount = project_db.full_amount - project_db.invested_amount
                 donation_amount = donation_db.full_amount - donation_db.invested_amount
-                if project_amount == 0:
+                if project_amount == 0: # если у проекта набранна нужная сумма переходим к следующему
                     break
                 if project_amount == donation_amount:
                     donation_db = await close_bd_obj(donation_db)
                     project_db = await close_bd_obj(project_db)
                     await update_data_in_db(donation_db, project_db, session)
-
                 elif project_amount > donation_amount:
                     donation_db = await close_bd_obj(donation_db)
                     project_db.invested_amount = project_db.invested_amount + donation_db.full_amount
                     await update_data_in_db(donation_db, project_db, session)
-
-                # elif project_amount < donation_amount:
                 else:
                     donation_db.invested_amount = project_amount
                     project_db = await close_bd_obj(project_db)

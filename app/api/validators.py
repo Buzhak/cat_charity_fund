@@ -16,7 +16,7 @@ async def check_name_duplicate(
             detail='Проект с таким именем уже существует!',
         )
 
-        
+
 async def check_charity_project_exists(
         project_id: int,
         session: AsyncSession,
@@ -34,7 +34,7 @@ async def check_amount(obj_db_amount: int, new_amount: int) -> None:
     if obj_db_amount > new_amount:
         raise HTTPException(
             status_code=400,
-            detail=f'Сумма средств должна быть больше изначальной {obj_db_amount}',
+            detail='Сумма средств должна быть больше изначальной {obj_db_amount}',
         )
 
 
@@ -42,7 +42,7 @@ async def check_no_delete_invested_projects(obj_db_invested_amount: int) -> None
     if obj_db_invested_amount != 0:
         raise HTTPException(
             status_code=400,
-            detail=f'В проект были внесены средства, не подлежит удалению!',
+            detail='В проект были внесены средства, не подлежит удалению!',
         )
 
 
@@ -50,7 +50,7 @@ async def check_no_edit_closed_projects(closed: bool) -> None:
     if closed:
         raise HTTPException(
             status_code=400,
-            detail=f'Закрытый проект нельзя редактировать!',
+            detail='Закрытый проект нельзя редактировать!',
         )
 
 
@@ -58,5 +58,5 @@ async def check_no_delete_closed_projects(closed: bool) -> None:
     if closed:
         raise HTTPException(
             status_code=400,
-            detail=f'Закрытый проект нельзя удалить!',
+            detail='Закрытый проект нельзя удалить!',
         )

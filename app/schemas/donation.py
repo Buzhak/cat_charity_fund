@@ -6,16 +6,11 @@ from pydantic import BaseModel, Field
 
 class DonationBase(BaseModel):
     pass
-    
-    
+
 
 class DonationCreate(DonationBase):
     full_amount: int = Field(..., gt=0)
     comment: Optional[str]
-
-
-# class DonationUpdate(BaseModel):
-#     comment: Optional[str]
 
 
 class DonationShortDB(DonationBase):
@@ -26,6 +21,7 @@ class DonationShortDB(DonationBase):
 
     class Config:
         orm_mode = True
+
 
 class DonationFullDB(DonationBase):
     comment: Optional[str]

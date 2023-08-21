@@ -3,7 +3,6 @@ from datetime import datetime
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.db import Base
 from app.models.charity_project import CharityProject
 from app.models.donation import Donation
 
@@ -11,14 +10,14 @@ from app.models.donation import Donation
 async def get_not_full_investition_list(
     model: CharityProject or Donation, session: AsyncSession
 ) -> (
-    list[CharityProject,] or list[Donation,]
+    list[CharityProject, ] or list[Donation, ]
 ):
     '''Функция отдаёт все оъекты, средства в коротых не были распределены до конца'''
     not_fully_invested = await session.execute(
-            select(model).where(
-                model.fully_invested == False
-            )
+        select(model).where(
+            model.fully_invested == 0
         )
+    )
     not_fully_invested = not_fully_invested.scalars().all()
     return not_fully_invested
 
@@ -41,7 +40,7 @@ async def close_bd_obj(
     Закрываем запись в БД
     Ставим "invested_amount" равным "full_amount"
     "fully_invested" = True
-    и ставис текущее время в "close_date"     
+    и ставис текущее время в "close_date"
     '''
     obj_db.invested_amount = obj_db.full_amount
     obj_db.fully_invested = True
@@ -65,7 +64,7 @@ async def investition(session: AsyncSession) -> None:
             for donation_db in not_fully_invested_donations:
                 project_amount = project_db.full_amount - project_db.invested_amount
                 donation_amount = donation_db.full_amount - donation_db.invested_amount
-                if project_amount == 0: # если у проекта набранна нужная сумма переходим к следующему
+                if project_amount == 0:  # если у проекта набранна нужная сумма переходим к следующему
                     break
                 if project_amount == donation_amount:
                     donation_db = await close_bd_obj(donation_db)

@@ -56,7 +56,6 @@ async def get_all_charity_projects(
 
 @router.delete(
     '/{charity_project_id}',
-    # response_model=CharityProjectDeleteDB,
     response_model=CharityProjectDB,
     dependencies=[Depends(current_superuser)]
 )
@@ -73,7 +72,6 @@ async def remove_charity_project(
 
 @router.patch(
     '/{charity_project_id}',
-    # response_model=CharityProjectUpdateDB,
     response_model=CharityProjectDB,
     dependencies=[Depends(current_superuser)]
 )

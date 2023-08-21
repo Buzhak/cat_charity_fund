@@ -5,9 +5,9 @@ from pydantic import BaseModel, Extra, Field, validator
 
 
 class CharityProjectBase(BaseModel):
-    name: str = Field(..., min_length=1, max_length=100)
-    description: str = Field(..., min_length=1)
-    full_amount: int = Field(..., gt=0)
+    name: str = Field(..., min_length=1, max_length=100, example='Назввание проекта')
+    description: str = Field(..., min_length=1, example='Описание проекта')
+    full_amount: int = Field(..., gt=0, example=1)
 
     @validator('name', 'description')
     def check_str(cls, value):
@@ -23,9 +23,9 @@ class CharityProjectCreate(CharityProjectBase):
 
 
 class CharityProjectUpdate(CharityProjectBase):
-    name: Optional[str] = Field(None, min_length=1, max_length=100)
-    description: Optional[str] = Field(None, min_length=1)
-    full_amount: Optional[int] = Field(None, gt=0)
+    name: Optional[str] = Field(None, min_length=1, max_length=100, example='Новое назввание проекта')
+    description: Optional[str] = Field(None, min_length=1, example='Новое описание проекта')
+    full_amount: Optional[int] = Field(None, gt=0, example=1)
 
     class Config:
         extra = Extra.forbid

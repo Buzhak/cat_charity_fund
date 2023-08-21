@@ -9,8 +9,8 @@ class DonationBase(BaseModel):
 
 
 class DonationCreate(DonationBase):
-    full_amount: int = Field(..., gt=0)
-    comment: Optional[str]
+    full_amount: int = Field(..., gt=0, example=1)
+    comment: Optional[str] = Field(None, example='Комментарий для пожертвования, по желанию')
 
 
 class DonationShortDB(DonationBase):

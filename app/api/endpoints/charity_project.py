@@ -7,21 +7,23 @@ from app.core.db import get_async_session
 from app.core.user import current_superuser
 from app.crud.charity_project import charity_project_crud
 from app.schemas.charityproject import (
-    CharityProjectCreate, CharityProjectDB, CharityProjectUpdate
+    CharityProjectCreate, CharityProjectDB, CharityProjectUpdate, CharityProjectShortDB
 )
 
 from app.api.validators import (
     check_amount,
-    check_delete,
     check_charity_project_exists,
     check_name_duplicate,
+    check_no_edit_closed_projects,
+    check_no_delete_closed_projects,
+    check_no_delete_invested_projects,
 )
 
 router = APIRouter()
 
 @router.post(
     '/',
-    response_model=CharityProjectDB,
+    response_model=CharityProjectShortDB,
     dependencies=[Depends(current_superuser)]
 )
 async def create_new_charity_project(
@@ -58,7 +60,8 @@ async def remove_charity_project(
     session: AsyncSession = Depends(get_async_session),
 ):
     charity_project = await check_charity_project_exists(charity_project_id, session)
-    await check_delete(charity_project.invested_amount)
+    await check_no_delete_invested_projects(charity_project.invested_amount)
+    await check_no_delete_closed_projects(charity_project.fully_invested)
     charity_project = await charity_project_crud.remove(charity_project, session)
     return charity_project
 
@@ -76,7 +79,7 @@ async def partially_update_charity_project(
     charity_project = await check_charity_project_exists(
         charity_project_id, session
     )
-
+    await check_no_edit_closed_projects(charity_project.fully_invested)
     if obj_in.full_amount is not None: # проверяем что новая сумма сборов на проект не меньше предыдущей.
         await check_amount(charity_project.full_amount, obj_in.full_amount)
     if obj_in.name is not None:

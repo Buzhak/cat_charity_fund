@@ -16,6 +16,7 @@ router = APIRouter()
 @router.post(
     '/',
     response_model=DonationShortDB,
+    response_model_exclude_none=True,
 )
 async def create_new_donation(
     donation: DonationCreate,

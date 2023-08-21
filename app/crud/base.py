@@ -1,10 +1,10 @@
 from typing import Optional
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import User
-
+from app.core.core import investition
 
 class CRUDBase:
 
@@ -27,7 +27,12 @@ class CRUDBase:
             self, 
             session: AsyncSession
     ):
-        db_objs = await session.execute(select(self.model))
+        db_objs = await session.execute(
+            select(
+                self.model
+            )
+            # ).order_by(self.model.create_date.desc())
+        )
         return db_objs.scalars().all()
 
     async def create(
@@ -42,6 +47,7 @@ class CRUDBase:
         db_obj = self.model(**obj_in_data)
         session.add(db_obj)
         await session.commit()
+
         await session.refresh(db_obj)
         return db_obj
 

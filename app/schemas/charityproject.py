@@ -28,12 +28,24 @@ class CharityProjectUpdate(CharityProjectBase):
     full_amount: Optional[int] = Field(None, gt=0)
 
 
-class CharityProjectDB(CharityProjectBase):
+class CharityProjectShortDB(CharityProjectBase):
     id: int
     invested_amount: int
     fully_invested: bool
+
+    class Config:
+        orm_mode = True
+
+
+
+class CharityProjectDB(BaseModel):
     create_date: datetime
-    close_date: datetime
+    description: str
+    full_amount: int
+    fully_invested: bool
+    id: int
+    invested_amount: int
+    name: str
 
     class Config:
         orm_mode = True

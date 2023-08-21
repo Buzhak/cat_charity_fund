@@ -1,12 +1,13 @@
 from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
-from sqlalchemy.orm import relationship, validates
+from sqlalchemy.orm import validates
 
 from app.core.db import Base
-from app.models.donation import Donation
 
-from app.models.core_models import same_time
 from app.models.error_hendlers import len_not_null, int_not_zero
+
+# def same_time(context):
+#     return context.get_current_parameters()['create_date']
 
 
 class CharityProject(Base):
@@ -15,8 +16,8 @@ class CharityProject(Base):
     full_amount = Column(Integer, nullable=False)
     invested_amount = Column(Integer, default=0)
     fully_invested = Column(Boolean, default=False)
-    create_date = Column(DateTime, default=datetime.utcnow)
-    close_date = Column(DateTime, default=same_time)
+    create_date = Column(DateTime, default=datetime.now)
+    close_date = Column(DateTime, default=datetime.now)
      
     @validates(name, description)
     def validate_len(self, key, value):

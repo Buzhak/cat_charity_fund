@@ -5,30 +5,36 @@ from pydantic import BaseModel, Field
 
 
 class DonationBase(BaseModel):
-    full_amount: int = Field(..., gt=0)
-    comment: Optional[str]
+    pass
+    
     
 
 class DonationCreate(DonationBase):
-    pass
-
-class DonationUpdate(BaseModel):
+    full_amount: int = Field(..., gt=0)
     comment: Optional[str]
 
+
+# class DonationUpdate(BaseModel):
+#     comment: Optional[str]
+
+
 class DonationShortDB(DonationBase):
-    id: int
+    comment: Optional[str]
     create_date: datetime
+    full_amount: int
+    id: int
 
     class Config:
         orm_mode = True
 
 class DonationFullDB(DonationBase):
-    id: int
+    comment: Optional[str]
     create_date: datetime
+    full_amount: int
+    id: int
     user_id: int
     invested_amount: int
     fully_invested: bool
-    close_date: datetime
 
     class Config:
         orm_mode = True

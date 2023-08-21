@@ -76,6 +76,6 @@ async def investition(session: AsyncSession) -> None:
                     project_db.invested_amount = project_db.invested_amount + donation_db.full_amount
                     await update_data_in_db(donation_db, project_db, session)
                 else:
-                    donation_db.invested_amount = project_amount
+                    donation_db.invested_amount = donation_db.invested_amount + project_amount
                     project_db = await close_bd_obj(project_db)
                     await update_data_in_db(donation_db, project_db, session)

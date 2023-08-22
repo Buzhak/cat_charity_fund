@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from typing import List, Union
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -10,7 +10,7 @@ from app.models.donation import Donation
 async def get_not_full_investition_list(
     model: CharityProject or Donation, session: AsyncSession
 ) -> (
-    list[CharityProject, ] or list[Donation, ]
+    List[Union[CharityProject, Donation]]
 ):
     '''Функция отдаёт все оъекты, средства в коротых не были распределены до конца'''
     not_fully_invested = await session.execute(

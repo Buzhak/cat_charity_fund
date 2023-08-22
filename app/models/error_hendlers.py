@@ -4,7 +4,7 @@ def len_not_null(key, value):
     return value
 
 
-def int_not_zero(key, value):
-    if value == 0:
+def int_not_zero_or_less(key, value):
+    if value <= 0:
         raise ValueError(f'Требуемая сумма {key} не может быть нулевой')
     return value

@@ -9,7 +9,7 @@ from app.models.user import User
 from app.schemas.donation import (
     DonationCreate, DonationFullDB, DonationShortDB
 )
-from app.core.core import investition
+from app.services.corelogic import investition
 
 router = APIRouter()
 

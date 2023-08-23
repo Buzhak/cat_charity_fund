@@ -1,4 +1,6 @@
 from datetime import datetime
+from abc import ABC
+
 from sqlalchemy import Boolean, Column, DateTime, Integer
 from sqlalchemy.orm import validates
 
